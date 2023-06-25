@@ -6,6 +6,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import SupabaseVectorStore
 from langchain.document_loaders import TextLoader
 from langchain.document_loaders import TextLoader
+from git import Repo
 
 load_dotenv()
 
@@ -17,14 +18,14 @@ supabase: Client = create_client(supabase_url, supabase_key)
 exclude_dir = ['.git', 'node_modules', 'public', 'assets']
 exclude_files = ['package-lock.json', '.DS_Store']
 exclude_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.ico', '.svg', '.webp',
-    '.mp3', '.wav']
+                      '.mp3', '.wav']
 
 documents = []
 
 for dirpath, dirnames, filenames in os.walk('repo'):
     # skip directories in exclude_dir
     dirnames[:] = [d for d in dirnames if d not in exclude_dir]
-    
+
     for file in filenames:
         _, file_extension = os.path.splitext(file)
 
@@ -41,7 +42,14 @@ docs = text_splitter.split_documents(documents)
 for doc in docs:
     source = doc.metadata['source']
     cleaned_source = '/'.join(source.split('/')[1:])
-    doc.page_content = "FILE NAME: " + cleaned_source + "\n###\n" + doc.page_content.replace('\u0000', '')
+    doc.page_content = "FILE NAME: " + cleaned_source + \
+        "\n###\n" + doc.page_content.replace('\u0000', '')
+
+# Gt git commits and diffs
+repo = Repo('repo')
+commits = repo.iter_commits()
+for commit in commits:
+    print(commit)
 
 embeddings = OpenAIEmbeddings()
 
