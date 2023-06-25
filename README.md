@@ -21,16 +21,17 @@ You can switch out either of these with your own preference.
 
 8. Open schema.sql file in your IDE, copy it and paste in the Supabase's Query Editor, Hit Run.
 
+9. Get a access token from Github and add it in `.env` after `GITHUB_TOKEN=`
 
-9. Configure the `.env` file with your repo url, repo branch of your choice, openai key, make sure you changed the Supabase's URL and key in the step 6.
+10. Configure the `.env` file with your repo url, repo branch of your choice, openai key, make sure you changed the Supabase's URL and key in the step 6.
 
-10. Run `pip install -r requirements.txt` to install the dependencies.
+11. Run `pip install -r requirements.txt` to install the dependencies.
 
-11. Run the `python3 load.py` script to clone the repo.
+12. Run the `python3 load.py` script to clone the repo.
 
-12. Run the `python3 embed.py` script to embed the repo.
+13. Run the `python3 embed.py` script to embed the repo.
 
-13. Run the `python3 main.py` script to ask questions about the repo.
+14. Run the `python3 main.py` script to ask questions about the repo.
 
 ## Contact
 
