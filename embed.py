@@ -5,8 +5,9 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import SupabaseVectorStore
 from langchain.document_loaders import TextLoader
-from langchain.document_loaders import TextLoader
+from langchain.schema import Document
 from git import Repo
+from git_embed import get_list_of_commits
 
 load_dotenv()
 
@@ -45,11 +46,21 @@ for doc in docs:
     doc.page_content = "FILE NAME: " + cleaned_source + \
         "\n###\n" + doc.page_content.replace('\u0000', '')
 
-# Gt git commits and diffs
-repo = Repo('repo')
-commits = repo.iter_commits()
-for commit in commits:
-    print(commit)
+commits_list = get_list_of_commits(Repo('repo'))
+
+def get_text_chunks_langchain(text):
+   text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=100)
+   docs = text_splitter.split_text(text)
+   return docs
+
+for commit in commits_list:
+    chunks = get_text_chunks_langchain(commit['diff'])
+    for chunk in chunks:
+        doc = Document(
+            page_content="COMMIT MESSAGE: " + commit['commit'] + "\n###\n" + chunk,
+            metadata={'commit_message': commit['commit']}
+        )
+        docs.append(doc)
 
 embeddings = OpenAIEmbeddings()
 
